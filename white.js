@@ -57,7 +57,7 @@ result.addEventListener("click", (e) => {
       var comma = Intl.NumberFormat("en-US");
       if (c === 3) {
         table.rows[r].cells[c].innerText = "\u20a6"+comma.format(
-          CalculatePension(d * 12)
+          CalculatePension(d)
         );
       } else if (c === 4) {
         table.rows[r].cells[c].innerText =  "\u20a6"+comma.format(
@@ -80,12 +80,13 @@ result.addEventListener("click", (e) => {
 
 
 
-function CalculatePension(grossIncome) {
+function CalculatePension(salary) {
   if (salary <= 30000) {
     return null;
   }
+  var grossIncome=salary*12;
   var pension = Math.fround(0.08 * grossIncome);
-  return pension;
+  return pension
 }
 
 function CalculateTaxableIncome(salary) {
