@@ -94,7 +94,7 @@ function CalculateTaxableIncome(salary) {
     return null;
   }
   var annualSalary = Math.fround(salary * 12);
-  var pension = CalculatePension(annualSalary);
+  var pension = CalculatePension(salary);
   var grossIncome = Math.fround(annualSalary - pension);
   var twentyGross = Math.fround(0.2 * grossIncome);
   var ConsolidatedReliefAllowance = 0;
