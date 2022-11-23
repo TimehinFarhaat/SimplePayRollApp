@@ -77,9 +77,13 @@ result.addEventListener("click", (e) => {
     }
   }
 });
-console.log(GetYearlyTax(2744000));
-console.log(GetMonthlyTax(9845000));
+
+
+
 function CalculatePension(grossIncome) {
+  if (salary <= 30000) {
+    return null;
+  }
   var pension = Math.fround(0.08 * grossIncome);
   return pension;
 }
