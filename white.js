@@ -53,28 +53,26 @@ result.addEventListener("click", (e) => {
   console.log(table);
   for (var r = 1, n = table.rows.length; r < n; r++) {
     for (var c = 3, m = table.rows[r].cells.length; c < m; c++) {
-      console.log(table.rows[r].cells[c]);
-
+      var d = table.rows[r].cells[2].innerText.replace(/[^\d.]/g, "");
+      var comma = Intl.NumberFormat("en-US");
       if (c === 3) {
-        table.rows[r].cells[c].innerText = CalculatePension(
-          table.rows[r].cells[2].innerText * 12
+        table.rows[r].cells[c].innerText = "\u20a6"+comma.format(
+          CalculatePension(d * 12)
         );
       } else if (c === 4) {
-        table.rows[r].cells[c].innerText = CalculateTaxableIncome(
-          table.rows[r].cells[2].innerText
+        table.rows[r].cells[c].innerText =  "\u20a6"+comma.format(
+          CalculateTaxableIncome(d)
         );
       } else if (c === 5) {
-        table.rows[r].cells[c].innerText = GetYearlyTax(
-          CalculateTaxableIncome(table.rows[r].cells[2].innerText)
+        table.rows[r].cells[c].innerText = "\u20a6"+ comma.format(
+          GetYearlyTax(CalculateTaxableIncome(d))
         );
       } else if (c === 6) {
         table.rows[r].cells[c].innerText =
           //   GetMonthlyTax(
           //   GetYearlyTax(CalculateTaxableIncome(table.rows[r].cells[2].innerText))
           // );
-          GetYearlyTax(
-            CalculateTaxableIncome(table.rows[r].cells[2].innerText)
-          ) / 12;
+          "\u20a6"+comma.format(GetYearlyTax(CalculateTaxableIncome(d)) / 12);
       }
     }
   }
@@ -184,130 +182,84 @@ function GetYearlyTax(salary) {
   return tax;
 }
 
-// public decimal CalculatePension(decimal GI)
-// {
-//     var pension = (8 / 100m) * GI;
-//     return pension;
-// }
+function Change(e) {
+  formatCurrency(e);
+}
 
-// public decimal CalculateTaxableIncome(decimal salary)
-// {
-//     if(salary <= 30000)
-//     {
-//         throw new ArgumentException("Salary not taxable");
-//     }
-//     decimal annualSalary = salary*12;
-//     decimal pension = CalculatePension(annualSalary);
-//     decimal grossIncome = annualSalary - pension;
-//     decimal twentyGross = (20/100m) * grossIncome;
-//     decimal ConsolidatedReliefAllowance = 0;
-//     if (200000 > ((1 / 100m) * annualSalary))
-//     {
-//         ConsolidatedReliefAllowance += 200000;
-//     }
-//     else
-//     {
-//         ConsolidatedReliefAllowance += ((1 / 100m) * annualSalary);
-//     }
-//     decimal total = pension + twentyGross + ConsolidatedReliefAllowance;
-//     decimal taxableIncome = annualSalary - total;
-//     return taxableIncome;
-// }
+var input = document.getElementById("currency-field");
+input.addEventListener("blur", (e) => {
+  formatCurrency(e);
+  blur();
+});
 
-// public decimal CalculateTaxFor1600000(decimal salary)
-// {
-//     return salary * (21 / 100m);
-// }
+function formatNumber(n) {
+  // format number 1000000 to 1,234,567
+  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
-// public decimal CalculateTaxFor3200000(decimal salary)
-// {
-//     return salary * (24 / 100m);
-// }
+function formatCurrency(blur) {
+  // appends $ to value, validates decimal side
+  // and puts cursor back in right position.
+  var input = document.getElementById("currency-field");
+  // get input value
+  var input_val = input.value;
 
-// public decimal CalculateTaxForFirst300000(decimal salary)
-// {
-//     return (salary * (7 / 100m));
-// }
+  // don't validate empty input
+  if (input_val === "") {
+    return;
+  }
+  console.log(input_val);
+  // original length
+  var original_len = input_val.length;
 
-// public decimal CalculateTaxForFirst500000(decimal salary)
-// {
-//     return (salary * (15 / 100m));
-// }
+  // initial caret position
+  var caret_pos = input.selectionStart;
 
-// public decimal CalculateTaxForSecond300000(decimal salary)
-// {
-//     return (salary * (11 / 100m));
-// }
+  // check for decimal
+  if (input_val.indexOf(".") >= 0) {
+    // get position of first decimal
+    // this prevents multiple decimals from
+    // being entered
+    var decimal_pos = input_val.indexOf(".");
 
-// public decimal CalculateTaxForSecond500000(decimal salary)
-// {
-//     return salary * (19 / 100m);
-// }
+    // split number by decimal point
+    var left_side = input_val.substring(0, decimal_pos);
+    var right_side = input_val.substring(decimal_pos);
 
-// public decimal GetMonthlyTax(decimal salary)
-// {
-//     decimal annualSalary=CalculateTaxableIncome(salary);
-//       decimal yearlyTax=GetYearlyTax(annualSalary);
-//     return yearlyTax/12;
-// }
+    // add commas to left side of number
+    left_side = formatNumber(left_side);
 
-// public decimal GetYearlyTax(decimal salary)
-// {
-//     decimal tax = 0;
-//     decimal annualSalary = salary;
-//     if(annualSalary <= 300000)
-//     {
-//         tax += CalculateTaxForFirst300000((annualSalary));
-//     }
-//     else if(annualSalary > 300000 && annualSalary <= 600000)
-//     {
-//         tax += CalculateTaxForFirst300000(300000);
-//         annualSalary-= 300000;
-//         tax += CalculateTaxForSecond300000(annualSalary);
-//     }
-//     else if(annualSalary > 600000 && annualSalary <= 1100000)
-//     {
-//         tax += CalculateTaxForFirst300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForSecond300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForFirst500000(annualSalary);
-//     }
-//     else if(annualSalary > 1100000 && annualSalary <= 1600000)
-//     {
-//         tax += CalculateTaxForFirst300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForSecond300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForFirst500000(500000);
-//         annualSalary -= 500000;
-//         tax +=CalculateTaxForSecond500000(annualSalary);
-//     }
-//     else if(annualSalary > 1600000 && annualSalary <= 3200000)
-//     {
-//         tax += CalculateTaxForFirst300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForSecond300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForFirst500000(500000);
-//         annualSalary -= 500000;
-//         tax += CalculateTaxForSecond500000(500000);
-//         annualSalary -= 500000;
-//         tax += CalculateTaxFor1600000(annualSalary);
-//     }
-//     else
-//     {
-//         tax += CalculateTaxForFirst300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForSecond300000(300000);
-//         annualSalary -= 300000;
-//         tax += CalculateTaxForFirst500000(500000);
-//         annualSalary -= 500000;
-//         tax += CalculateTaxForSecond500000(500000);
-//         annualSalary -= 500000;
-//         tax += CalculateTaxFor1600000(1600000);
-//         annualSalary -= 1600000;
-//         tax += CalculateTaxFor3200000(annualSalary);
-//     }
-//     return tax;
-// }
+    // validate right side
+    right_side = formatNumber(right_side);
+
+    // On blur make sure 2 numbers after decimal
+    if (blur === "blur") {
+      right_side += "00";
+    }
+
+    // Limit decimal to only 2 digits
+    right_side = right_side.substring(0, 2);
+
+    // join number by .
+    input_val =  "\u20a6" + left_side + "." + right_side;
+  } else {
+    // no decimal entered
+    // add commas to number
+    // remove all non-digits
+    input_val = formatNumber(input_val);
+    input_val =  "\u20a6" + input_val;
+
+    // final formatting
+    if (blur === "blur") {
+      input_val += ".00";
+    }
+  }
+
+  // send updated string to input
+  input.value = input_val;
+
+  // put caret back in the right position
+  var updated_len = input_val.length;
+  caret_pos = updated_len - original_len + caret_pos;
+  input.setSelectionRange(caret_pos, caret_pos);
+}

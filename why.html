@@ -31,7 +31,8 @@
         <div class="info">
           <input type="text" name="fname" placeholder="First name">
           <input type="text" name="lname" placeholder="Last name">
-          <input type="" name="salary" placeholder="Salary" min="5">
+          <input type="" name="salary" id="currency-field" pattern="^\ &#x20a6;\d{1,3}(,\d{3})*(\.\d+)?$" value=""
+            data-type="currency" placeholder=" &#x20a6;1,000,000.00" onkeyup="Change()" min="5">
           <button type="submit">Submit</button>
       </form>
     </div>
